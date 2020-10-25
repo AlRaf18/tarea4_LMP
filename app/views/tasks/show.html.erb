@@ -1,0 +1,8 @@
+<div>Title: <%= @object.title %></div>
+<div>Description: <%= @object.description %></div>
+<div>Attendant: <%= @object.attendant %></div>
+
+<div><%= button_to "EDITAR", edit_task_path(@object.id), method: :get %></div>
+<div><%= button_to "ELIMINAR", task_path(@object.id), method: :delete %></div>
+
+<%= link_to 'volver', tasks_path %>

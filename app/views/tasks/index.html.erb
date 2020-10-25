@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #customers {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #customers td, #customers th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    #customers tr:nth-child(even){background-color: #f2f2f2;}
+
+    #customers tr:hover {background-color: #ddd;}
+
+    #customers th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #4CAF50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <%= button_to "Agregar Tarea", new_task_path, method: :get %>
+  <table id="customers">
+    <tr>
+      <th>id</th>
+      <th>Titulo</th>
+      <th>Descripción</th>
+      <th>Encargado</th>
+      <th>Ver</th>
+      <th>Editar</th>
+      <th>Eliminar</th>
+    </tr>
+    <% @objects.each do |task| %>
+      <tr>
+        <td><%= task.id %></td>
+        <td><%= task.title %></td>
+        <td><%= task.description %></td>
+        <td><%= task.attendant %></td>
+        <td><%= button_to "VER", task_path(task.id), method: :get %></td>
+        <td><%= button_to "EDITAR", edit_task_path(task.id), method: :get %></td>
+        <td><%= button_to "ELIMINAR", task_path(task.id), method: :delete %></td>
+      </tr>
+      <% end %>
+  </table>
+
+  <div id="div1">
+
+  </div>
+</body>
+</html>
