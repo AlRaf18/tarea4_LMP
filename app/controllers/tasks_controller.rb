@@ -1,8 +1,21 @@
 class TasksController < ApplicationController
+  before_action :check_session
+
+  def check_session
+    redirect_to :init_session if cookies[:session].nil?
+  end
+
   def index
     # Se mostraran en la tabla todas las tareas ordenadas
     # ascendentemente respecto al nombre del encargado
-    @objects = Task.all.order(attendant: :asc)
+    @filter_is_active = cookies[:filter]
+    if @filter_is_active
+      @objects = Task.all.where(attendant: cookies[:session])
+    else
+      @objects = Task.all
+    end
+    @completed_percentage = ((@objects.where(completed: true).count / @objects.count.to_f) * 100).round rescue "Aun no hay tareas"
+    
   end
 
   def show
@@ -29,7 +42,8 @@ class TasksController < ApplicationController
   def create
     # Se crea instancia del objeto task
     @object = Task.new(controller_params)
-
+    @object.attendant = cookies[:session]
+    @object.completed = false
     # Se guarda en base de datos, y a su vez se verifica
     # la existencia de algun error
     if @object.save
@@ -52,6 +66,23 @@ class TasksController < ApplicationController
     @object.destroy
 
     # Redirect al path de tareas
+    redirect_to "/#{controller_path}"
+  end
+
+  def set_filter_cookie
+    cookies[:filter] = true
+    redirect_to "/#{controller_path}"
+  end
+  
+  def delete_filter_cookie
+    cookies.delete :filter
+    redirect_to "/#{controller_path}"
+  end
+  
+  def complete_task
+    @object = Task.all.find(params[:id])
+    @object.completed = true
+    @object.save
     redirect_to "/#{controller_path}"
   end
 

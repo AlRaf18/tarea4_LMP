@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     #customers {
       font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -27,35 +28,97 @@
       background-color: #4CAF50;
       color: white;
     }
+
+    .button-wrapper {
+      margin-top: 20px;
+    }
+
+    .button-wrapper input {
+      width: 100%;
+    }
+
+    input{
+      background-color: #3771d3;
+      border: none;
+      height: 45px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .header-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cookie {
+      background-color: #c1f732ba;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 20px;
+      border: 1px solid;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <%= button_to "Agregar Tarea", new_task_path, method: :get %>
+  <div class="header-wrapper">
+    <div class="form">
+      <%=
+        if !@filter_is_active
+          form_with(url: set_filter_cookie_path, method: "get", local: true) do
+            submit_tag("Ver solamente mis tareas")
+          end
+        else
+          button_to "Ver tareas de todos", delete_filter_cookie_path, method: :get
+        end
+      %>
+    </div>
+    <div class="cookie">
+        <div>
+          <%= link_to "Cerrar sesión", log_out_path %>
+        </div>
+        <div id="div1">
+          <% if @objects.any? %>
+            Se han completado el <%= @completed_percentage %>% de las tareas.
+          <% else %>
+            <%= @completed_percentage %>
+          <% end %>
+        </div>
+    </div>
+  </div>
   <table id="customers">
     <tr>
       <th>id</th>
       <th>Titulo</th>
       <th>Descripción</th>
       <th>Encargado</th>
-      <th>Ver</th>
+      <th>Terminado</th>
       <th>Editar</th>
       <th>Eliminar</th>
     </tr>
     <% @objects.each do |task| %>
-      <tr>
-        <td><%= task.id %></td>
-        <td><%= task.title %></td>
-        <td><%= task.description %></td>
-        <td><%= task.attendant %></td>
-        <td><%= button_to "VER", task_path(task.id), method: :get %></td>
-        <td><%= button_to "EDITAR", edit_task_path(task.id), method: :get %></td>
-        <td><%= button_to "ELIMINAR", task_path(task.id), method: :delete %></td>
-      </tr>
-      <% end %>
+    <tr>
+      <td><%= task.id %></td>
+      <td><%= task.title %></td>
+      <td><%= task.description %></td>
+      <td><%= task.attendant %></td>
+      <td>
+        <%= 
+        if task.completed
+          content_tag(:span, nil,class: "fa fa-check")
+        else
+          button_to "Marcar como terminada", complete_task_path(task.id)
+        end
+        %>
+      </td>
+      <td><%= button_to "EDITAR", edit_task_path(task.id), method: :get %></td>
+      <td><%= button_to "ELIMINAR", task_path(task.id), method: :delete %></td>
+    </tr>
+    <% end %>
   </table>
-
-  <div id="div1">
-
+  <div class="button-wrapper">
+    <%= button_to "Agregar Tarea", new_task_path, method: :get %>
   </div>
 </body>
 </html>
