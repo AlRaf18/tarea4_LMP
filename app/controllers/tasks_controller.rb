@@ -6,8 +6,6 @@ class TasksController < ApplicationController
   end
 
   def index
-    # Se mostraran en la tabla todas las tareas ordenadas
-    # ascendentemente respecto al nombre del encargado
     @filter_is_active = cookies[:filter]
     if @filter_is_active
       @objects = Task.all.where(attendant: cookies[:session])
@@ -40,32 +38,21 @@ class TasksController < ApplicationController
   end
 
   def create
-    # Se crea instancia del objeto task
     @object = Task.new(controller_params)
     @object.attendant = cookies[:session]
     @object.completed = false
-    # Se guarda en base de datos, y a su vez se verifica
-    # la existencia de algun error
+    
     if @object.save
-      # En caso de no haber errores, hace el redirect
-      # al path donde se ven todas las tareas
       redirect_to "/#{controller_path}"
     else
-      # En caso de existir algun error, manda a new, el
-      # cual hace el render del form nuevamente junto con
-      # los errores encontados (Se maneja en la vista)
       render 'new'
     end
   end
 
   def destroy
-    # Se busca el objeto a eliminar por su id
     @object = Task.all.find(params[:id])
-
-    # Se elimina
     @object.destroy
 
-    # Redirect al path de tareas
     redirect_to "/#{controller_path}"
   end
 
